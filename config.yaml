@@ -1,0 +1,78 @@
+# BHL Page Classification Configuration
+
+# Model settings
+model:
+  name: "google/vit-base-patch16-224"
+  image_size: 224
+  num_labels: 7
+  problem_type: "multi_label_classification"
+
+# Label configuration
+labels:
+  - "article_start"
+  - "article_continuation"
+  - "article_end"
+  - "illustrated_plate"
+  - "plate_caption"
+  - "blank_page"
+  - "other"
+
+# Data paths
+data:
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  annotations_file: "data/annotations/labels.csv"
+  train_split: 0.7
+  val_split: 0.15
+  test_split: 0.15
+
+# Training parameters
+training:
+  batch_size: 8
+  num_epochs: 20
+  learning_rate: 2e-5
+  weight_decay: 0.01
+  warmup_steps: 500
+  max_grad_norm: 1.0
+  seed: 42
+
+  # Early stopping
+  early_stopping_patience: 5
+  early_stopping_metric: "val_loss"
+
+  # Checkpointing
+  save_steps: 500
+  save_total_limit: 3
+  checkpoint_dir: "checkpoints"
+
+  # Logging
+  logging_steps: 50
+  log_dir: "logs"
+  use_wandb: false
+  wandb_project: "bhl-page-classifier"
+
+# Data augmentation
+augmentation:
+  random_rotation: 5
+  random_brightness: 0.1
+  random_contrast: 0.1
+  horizontal_flip: false  # Don't flip pages
+  vertical_flip: false
+
+# Sequential post-processing
+sequential:
+  enabled: true
+  window_size: 5
+  min_article_length: 2  # Minimum pages for an article
+  isolated_correction: true  # Correct isolated single-page predictions
+  blank_tolerance: 1  # Allow 1 blank page within article sequence
+
+# Inference
+inference:
+  batch_size: 16
+  threshold: 0.5  # Probability threshold for multi-label classification
+  model_path: "models/best_model"
+
+# Hardware
+device: "mps"  # Use "cuda", "mps", or "cpu"
+num_workers: 4
