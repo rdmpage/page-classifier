@@ -48,22 +48,18 @@ class BHLPageDataset(Dataset):
         elif 'page_num' in self.annotations.columns:
             self.annotations = self.annotations.sort_values('page_num').reset_index(drop=True)
 
-        # Extract label columns
+        # Auto-detect label columns: any column that's not metadata
+        metadata_cols = {'filename', 'page_num', 'publication_id'}
         self.label_columns = [
-            'article_start',
-            'article_continuation',
-            'article_end',
-            'illustrated_plate',
-            'plate_caption',
-            'blank_page',
-            'other'
+            col for col in self.annotations.columns
+            if col not in metadata_cols
         ]
 
-        # Validate that label columns exist
-        missing_cols = [col for col in self.label_columns
-                       if col not in self.annotations.columns]
-        if missing_cols:
-            raise ValueError(f"Missing label columns: {missing_cols}")
+        if len(self.label_columns) == 0:
+            raise ValueError(
+                f"No label columns found! CSV must have columns other than "
+                f"{metadata_cols}. Found columns: {list(self.annotations.columns)}"
+            )
 
     def __len__(self) -> int:
         return len(self.annotations)
@@ -140,7 +136,8 @@ class BHLPageDataset(Dataset):
 def create_annotation_template(
     image_dir: str,
     output_file: str,
-    extract_page_num: bool = True
+    extract_page_num: bool = True,
+    label_columns: List[str] = None
 ) -> None:
     """Create a template CSV for annotation.
 
@@ -148,6 +145,7 @@ def create_annotation_template(
         image_dir: Directory containing images
         output_file: Path to save template CSV
         extract_page_num: Try to extract page numbers from filenames
+        label_columns: List of label column names (if None, uses defaults)
     """
     image_files = [
         f for f in os.listdir(image_dir)
@@ -175,15 +173,16 @@ def create_annotation_template(
         data['publication_id'] = pub_ids
 
     # Add empty label columns
-    label_columns = [
-        'article_start',
-        'article_continuation',
-        'article_end',
-        'illustrated_plate',
-        'plate_caption',
-        'blank_page',
-        'other'
-    ]
+    if label_columns is None:
+        label_columns = [
+            'article_start',
+            'article_continuation',
+            'article_end',
+            'illustrated_plate',
+            'plate_caption',
+            'blank_page',
+            'other'
+        ]
 
     for col in label_columns:
         data[col] = 0
