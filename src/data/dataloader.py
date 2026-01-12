@@ -88,6 +88,9 @@ def create_dataloaders(
     if eval_transform is not None:
         val_dataset.dataset.transform = eval_transform
         test_dataset.dataset.transform = eval_transform
+        
+    # Only use pin_memory with CUDA
+    pin_memory = torch.cuda.is_available()        
 
     # Create dataloaders
     train_loader = DataLoader(
@@ -96,7 +99,7 @@ def create_dataloaders(
         shuffle=True,
         num_workers=num_workers,
         collate_fn=collate_fn,
-        pin_memory=True
+        pin_memory=pin_memory
     )
 
     val_loader = DataLoader(
@@ -105,7 +108,7 @@ def create_dataloaders(
         shuffle=False,
         num_workers=num_workers,
         collate_fn=collate_fn,
-        pin_memory=True
+        pin_memory=pin_memory
     )
 
     test_loader = DataLoader(
@@ -114,7 +117,7 @@ def create_dataloaders(
         shuffle=False,
         num_workers=num_workers,
         collate_fn=collate_fn,
-        pin_memory=True
+        pin_memory=pin_memory
     )
 
     return train_loader, val_loader, test_loader
@@ -147,14 +150,17 @@ def create_inference_dataloader(
         processor=processor,
         transform=transform
     )
-
+    
+    # Only use pin_memory with CUDA
+    pin_memory = torch.cuda.is_available()        
+    
     loader = DataLoader(
         dataset,
         batch_size=batch_size,
         shuffle=False,  # Important: maintain order for sequential processing
         num_workers=num_workers,
         collate_fn=collate_fn,
-        pin_memory=True
+        pin_memory=pin_memory
     )
 
     return loader

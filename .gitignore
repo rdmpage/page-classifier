@@ -40,11 +40,7 @@ ENV/
 *.ipynb
 
 # Data files (adjust as needed)
-data/raw/*.jpg
-data/raw/*.jpeg
-data/raw/*.png
-data/raw/*.tif
-data/raw/*.tiff
+data/raw/*
 data/processed/
 *.csv
 

@@ -4,18 +4,20 @@
 model:
   name: "google/vit-base-patch16-224"
   image_size: 224
-  num_labels: 7
+  num_labels: 8
   problem_type: "multi_label_classification"
 
 # Label configuration
 labels:
-  - "article_start"
-  - "article_continuation"
-  - "article_end"
-  - "illustrated_plate"
-  - "plate_caption"
-  - "blank_page"
-  - "other"
+  - "cover"
+  - "begin"
+  - "inside"
+  - "end"
+  - "illustration"
+  - "illustration_caption"
+  - "blank"
+  - "outside"
+
 
 # Data paths
 data:
@@ -30,7 +32,7 @@ data:
 training:
   batch_size: 8
   num_epochs: 20
-  learning_rate: 2e-5
+  learning_rate: 0.00002
   weight_decay: 0.01
   warmup_steps: 500
   max_grad_norm: 1.0
@@ -38,7 +40,7 @@ training:
 
   # Early stopping
   early_stopping_patience: 5
-  early_stopping_metric: "val_loss"
+  early_stopping_metric: "eval_loss"
 
   # Checkpointing
   save_steps: 500

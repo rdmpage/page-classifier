@@ -108,7 +108,7 @@ def main():
     start_epoch = 0
     if args.checkpoint:
         print(f"Loading checkpoint from {args.checkpoint}")
-        checkpoint = torch.load(args.checkpoint, map_location=device)
+        checkpoint = torch.load(args.checkpoint, map_location=device, weights_only=False)
         model.load_state_dict(checkpoint['model_state_dict'])
         start_epoch = checkpoint.get('epoch', 0)
 
@@ -167,7 +167,8 @@ def main():
     print("\nEvaluating on test set...")
     checkpoint = torch.load(
         f"{config['training']['checkpoint_dir']}/best_model.pt",
-        map_location=device
+        map_location=device,
+        weights_only=False
     )
     model.load_state_dict(checkpoint['model_state_dict'])
 
