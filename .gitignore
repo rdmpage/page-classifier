@@ -40,7 +40,7 @@ ENV/
 *.ipynb
 
 # Data files (adjust as needed)
-data/raw/*
+data/raw
 data/processed/
 *.csv
 

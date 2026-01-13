@@ -110,7 +110,7 @@ def main():
         num_labels=config['model']['num_labels']
     )
 
-    checkpoint = torch.load(args.model, map_location=device)
+    checkpoint = torch.load(args.model, map_location=device, weights_only=False)
     model.load_state_dict(checkpoint['model_state_dict'])
     model = model.to(device)
     print("Model loaded successfully!")

@@ -23,7 +23,7 @@ labels:
 data:
   raw_dir: "data/raw"
   processed_dir: "data/processed"
-  annotations_file: "data/annotations/labels.csv"
+  annotations_file: "data/raw/training.csv"
   train_split: 0.7
   val_split: 0.15
   test_split: 0.15
@@ -63,7 +63,7 @@ augmentation:
 
 # Sequential post-processing
 sequential:
-  enabled: true
+  enabled: false
   window_size: 5
   min_article_length: 2  # Minimum pages for an article
   isolated_correction: true  # Correct isolated single-page predictions
